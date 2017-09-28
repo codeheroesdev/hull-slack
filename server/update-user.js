@@ -68,7 +68,12 @@ export default function (connectSlack, { client: hull, ship }, messages = []) {
       whitelist = []
     } = private_settings;
 
-    if (!hull || !user.id || !token) return hull.logger.info("outgoing.user.skip", { message: "Missing credentials", token: !!token });
+    if (!hull || !user.id || !token) {
+      return hull.logger.info("outgoing.user.skip", {
+        message: "Missing credentials",
+        token: !!token
+      });
+    }
 
     const client = hull.asUser(_.pick(user, "email", "id", "external_id"));
 
@@ -108,18 +113,20 @@ export default function (connectSlack, { client: hull, ship }, messages = []) {
     }
 
     return setupChannels({ hull, bot, app_token: token, channels })
-    .then(({ teamChannels, teamMembers }) => {
-      function postToChannel(channel) {
-        client.logger.info("outgoing.user.success", { text: payload.text, channel });
-        return bot.say({ ...payload, channel });
-      }
-      function postToMember(channel) {
-        client.logger.info("outgoing.user.success", { text: payload.text, member: channel });
-        return bot.say({ ...payload, channel });
-      }
-      _.map(getChannelIds(teamChannels, currentNotificationChannelNames), postToChannel);
-      _.map(getChannelIds(teamMembers, _.map(currentNotificationChannelNames, c => c.replace(/^@/, ""))), postToMember);
-    }, err => tellUser(`:crying_cat_face: Something bad happened while setting up the channels :${err.message}`, err))
-    .catch(err => tellUser(`:crying_cat_face: Something bad happened while posting to the channels :${err.message}`, err));
+      .then(({ teamChannels, teamMembers }) => {
+        function postToChannel(channel) {
+          client.logger.info("outgoing.user.success", { text: payload.text, channel });
+          return bot.say({ ...payload, channel });
+        }
+
+        function postToMember(channel) {
+          client.logger.info("outgoing.user.success", { text: payload.text, member: channel });
+          return bot.say({ ...payload, channel });
+        }
+
+        _.map(getChannelIds(teamChannels, currentNotificationChannelNames), postToChannel);
+        _.map(getChannelIds(teamMembers, _.map(currentNotificationChannelNames, c => c.replace(/^@/, ""))), postToMember);
+      }, err => tellUser(`:crying_cat_face: Something bad happened while setting up the channels :${err.message}`, err))
+      .catch(err => tellUser(`:crying_cat_face: Something bad happened while posting to the channels :${err.message}`, err));
   });
 }
