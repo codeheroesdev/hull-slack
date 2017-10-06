@@ -1,10 +1,12 @@
 import { Strategy as SlackStrategy } from "passport-slack";
 import { notifHandler, oAuthHandler } from "hull/lib/utils";
+import devMode from "./dev-mode";
+
 import updateUser from "./update-user";
 import BotFactory from "./bot-factory";
 
 module.exports = function Server(options = {}) {
-  const { port, hostSecret, clientID, clientSecret, Hull, devMode } = options;
+  const { port, hostSecret, clientID, clientSecret, Hull } = options;
   const { Middleware } = Hull;
   const { controller, connectSlack, getBot } = BotFactory({ port, hostSecret, clientID, clientSecret, Hull, devMode });
 
@@ -89,6 +91,9 @@ module.exports = function Server(options = {}) {
       }
     }));
 
+    if (options.devMode) {
+      app.use(devMode());
+    }
 
     Hull.logger.info("app.start", { port });
 

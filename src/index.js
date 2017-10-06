@@ -1,5 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import ready from "domready";
+import App from "./app";
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ready(() => {
+  const root = document.getElementById("editor");
+  ReactDOM.render(<App />, root);
+});
