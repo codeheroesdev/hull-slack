@@ -1,9 +1,12 @@
 import { Strategy as SlackStrategy } from "passport-slack";
-import { notifHandler, oAuthHandler } from "hull/lib/utils";
+import { notifHandler, oAuthHandler, smartNotifierHandler } from "hull/lib/utils";
 import devMode from "./dev-mode";
 
 import updateUser from "./update-user";
 import BotFactory from "./bot-factory";
+import fetchUser from "./hull/fetch-user";
+import slackUsers from "./lib/get-team-members";
+import slackChannels from "./lib/get-team-channels";
 
 module.exports = function Server(options = {}) {
   const { port, hostSecret, clientID, clientSecret, Hull } = options;
@@ -69,6 +72,34 @@ module.exports = function Server(options = {}) {
       },
     }));
 
+    app.get("/auth/user", (req, res) => { // TODO URL REMOVE AUTH
+      return fetchUser({ hull: req.hull.client, search: req.query }).then(user => {
+        console.log(user);
+        return res.send(user);
+      }).catch(error => {
+        console.log(error);
+        return res.status(404).send({ error });
+      });
+    });
+
+    app.get("/auth/slack-utils", (req, res) => {
+      const bot = connectSlack({ hull: req.hull.client, ship: req.hull.ship });
+
+      slackUsers(bot).then(members => {
+        console.log(members);
+        res.send(members);
+      });
+    });
+
+    app.get("/auth/slack-channels", (req, res) => {
+      const bot = connectSlack({ hull: req.hull.client, ship: req.hull.ship });
+
+      slackChannels(bot).then(channels => {
+        console.log(channels);
+        res.send(channels);
+      });
+    });
+
     app.get("/connect", function parseToken(req, res, next) {
       req.hull = { ...req.hull, token: req.query.token };
       next();
@@ -83,7 +114,7 @@ module.exports = function Server(options = {}) {
       }, 2000);
     });
 
-    app.post("/notify", notifHandler({
+    app.use("/notify", notifHandler({
       hostSecret,
       handlers: {
         "ship:update": ({ message = {} }, { hull = {}, ship = {} }) => connectSlack({ hull, ship, force: true }),

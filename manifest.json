@@ -6,7 +6,8 @@
   "tags": [
     "incoming",
     "outgoing",
-    "oneColumn"
+    "oneColumn",
+    "smart-notifier"
   ],
   "settings": [],
   "private_settings": [
@@ -180,6 +181,9 @@
   "subscriptions": [
     {
       "url": "/notify"
+    },
+    {
+      "url": "/smart-notifier"
     }
   ]
 }

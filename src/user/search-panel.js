@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import Icon from "../icon/icon";
 import { Button } from "react-bootstrap";
+
+import Icon from "../icon/icon";
 
 export default class SearchPanel extends Component {
   constructor(props) {
@@ -42,16 +43,13 @@ export default class SearchPanel extends Component {
 
     return (
       <form className="form form-light mt-05 mb-05" onSubmit={this.handleSubmit.bind(this)}>
-        <div className="input-group">
-          {/*<div className="input-group-addon" style={{ textTransform: "none", background: "none" }}>*/}
-            {/*<h4 className="m-0 text-muted">Search</h4>*/}
-          {/*</div>*/}
+        <div className="search-panel">
           <input type="text" placeholder="Name or Email" value={this.state.userSearch}
                  onChange={this.handleEmailChange.bind(this)} className="form-control form-control-sm"/>
-          {/*<div style={{ position: "absolute", right: 0, top: -10, zIndex: 2 }}>*/}
-            <Button bsStyle={ loading ? "warning" : "default" } bsSize="sm" clasName='btn-pill btn-rounded'
-                    onClick={this.handleSubmit.bind(this)}> <Icon name={this.getIcon()}/> { loading ? "Loading" : "Search" } </Button>
-          {/*</div>*/}
+          <Button bsStyle={loading ? "warning" : "default"} bsSize="sm" clasName='btn-pill btn-rounded'
+                  onClick={this.handleSubmit.bind(this)}> <Icon className="icon"
+                                                                name={this.getIcon()}/> {loading ? "Loading" : "Search"}
+          </Button>
         </div>
       </form>
     );

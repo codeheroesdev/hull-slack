@@ -31,7 +31,8 @@ module.exports = {
   resolve: { extensions: ["", ".js", ".jsx"] },
   module: {
     loaders: [
-      { test: /\.(css|scss)$/, loaders: ["style?singleton=true", "css?modules&importLoaders=1"] },
+      { test: /\.css$/,
+        loaders: ["style-loader", "css-loader"] },
       { test: /\.svg$/, loader: "svg-inline" },
       {
         test: /\.(js|jsx)$/,

@@ -2,7 +2,7 @@
 <head>
   <title>Hull <%= name %></title>
   <link rel="stylesheet" href="//dd04rofzygnm0.cloudfront.net/releases/master/865f04865d2448286626bac92c518a8f8ea8bafe/stylesheets/neue.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/2.1.0/superagent.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/2.1.0/superagent.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="/home.js"></script>
   <style>
 	.custom-editor {
@@ -10,8 +10,21 @@
 	}
 
 	.user-attribute-btn {
-		padding-top: 0;
-		padding-bottom: 0;
+		padding: 0;
+		overflow: scroll;
+	}
+    .search-panel {
+        display: flex;
+    }
+	.user-properties-block-vertical {
+		max-height: 60vh;
+		overflow-y: scroll;
+	}
+	.message-editor {
+		margin-top: 10px;
+	}
+	.my-button-success {
+		float: right;
 	}
   </style>
 </head>

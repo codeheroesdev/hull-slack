@@ -22,5 +22,8 @@ export default props => {
     [styles.icon]: true,
     [styles.colorized]: !!colorize
   });
+
+  console.log(cls, "yolo");
+
   return <SVGIcon src={src} className={cls} {...pp} />;
 };
