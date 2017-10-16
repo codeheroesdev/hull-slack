@@ -4,10 +4,8 @@ import { EditorState, Modifier, ContentState, RichUtils } from "draft-js";
 import _ from "lodash";
 import axios from "axios";
 
-import UserPanel from "./user/user-panel";
-import MessagePanel from "./message/message-panel";
 import { ErrorPanel } from "./utils/error-panel";
-
+import Layout from "./layout/layout";
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -69,13 +67,14 @@ export default class App extends Component {
   };
 
   searchUser = search =>
-    this.setState({ loadingUser: true }, () => axios.get("user", { params: _.merge({ email: search }, this.state.config) })
+    this.setState({ loadingUser: true }, () => axios.get("user", { params: _.merge({ email: search, events: true }, this.state.config) })
       .then(({ data = {}, error }) => {
         if (error) {
           return this.setState({ loadingUser: false, error });
         }
 
-        const { user } = data;
+        const { user, events, segments } = data;
+        // TODO MAKE USE OF EVENTS AND SEGMENTS
         return this.setState({ loadingUser: false, currentUser: user || {} });
       })
       .catch(error => this.setState({ error }))
@@ -109,46 +108,23 @@ export default class App extends Component {
       return <ErrorPanel/>;
     }
 
+
     if (!loadingSlackMembers && !loadingSlackChannels) {
       return (
         <Grid fluid className="pt-1">
-          {/* <MultiSelectPanel*/}
-            {/* values={this.state.slackMembers}*/}
-            {/* propertyValueName={"id"}*/}
-            {/* propertyLabelName={"name"}*/}
-            {/* placeholder="Select users to whom we will send messages"*/}
-          {/* />*/}
-
-           {/* <MultiSelectPanel*/}
-            {/* values={this.state.slackChannels}*/}
-            {/* propertyValueName={"id"}*/}
-            {/* propertyLabelName={"name"}*/}
-            {/* placeholder="Select channels to which we will send messages"*/}
-          {/* />*/}
-
           <Row className="flexRow">
-            <UserPanel
-              user={this.state.currentUser}
-              onClick={this.onUserAttributeClick.bind(this)}
-              disabled={!this.state.clickedAtLeastOnce}
+            <Layout
+              currentUser={this.state.currentUser}
+              onUserAttributeClick={this.onUserAttributeClick.bind(this)}
+              clickedAtLeastOnce={this.state.clickedAtLeastOnce}
               currentTab={this.state.currentTab}
-              onSearch={this.searchUser.bind(this)}
+              onUserSearch={this.searchUser.bind(this)}
               loadingUser={this.state.loadingUser}
-              xs={3}
-              sm={3}
-              md={3}
-              lg={3}
-            />
-
-            <MessagePanel
               state={this.state.currentTab === "message-preview" ? this.state.previewState : this.state.editorState}
-              onChange={this.onChange.bind(this)}
-              currentTab={this.state.currentTab}
-              handleTabSelect={this.handleTabChange.bind(this)}
-              xs={9}
-              sm={9}
-              md={9}
-              lg={9}
+              onMessageChange={this.onChange.bind(this)}
+              handleTabChange={this.handleTabChange.bind(this)}
+              editorState={this.state.editorState}
+              previewState={this.state.previewState}
             />
           </Row>
         </Grid>

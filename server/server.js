@@ -73,13 +73,15 @@ module.exports = function Server(options = {}) {
     }));
 
     app.get("/auth/user", (req, res) => { // TODO URL REMOVE AUTH
-      return fetchUser({ hull: req.hull.client, search: req.query }).then(user => {
-        console.log(user);
-        return res.send(user);
-      }).catch(error => {
-        console.log(error);
-        return res.status(404).send({ error });
-      });
+      return fetchUser({
+        hull: req.hull.client,
+        search: req.query,
+        options: req.query.events ? { action: { value: "events" } } : {}
+      })
+        .then(user => {
+          console.log(user);
+          return res.send(user);
+        }).catch(error => res.status(404).send({ error }));
     });
 
     app.get("/auth/slack-utils", (req, res) => {
@@ -105,14 +107,14 @@ module.exports = function Server(options = {}) {
       next();
     },
 
-    Middleware({ hostSecret, fetchShip: true, cacheShip: true }),
+      Middleware({ hostSecret, fetchShip: true, cacheShip: true }),
 
-    function onReconnect(req, res) {
-      connectSlack({ hull: req.hull.client, ship: req.hull.ship });
-      setTimeout(() => {
-        res.redirect(req.header("Referer"));
-      }, 2000);
-    });
+      function onReconnect(req, res) {
+        connectSlack({ hull: req.hull.client, ship: req.hull.ship });
+        setTimeout(() => {
+          res.redirect(req.header("Referer"));
+        }, 2000);
+      });
 
     app.use("/notify", notifHandler({
       hostSecret,

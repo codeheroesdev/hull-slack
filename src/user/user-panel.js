@@ -31,12 +31,11 @@ function flatArrays(object) {
 
 export default class UserPanel extends Component {
   render() {
-    const { xs, sm, md, lg, user, onClick, disabled, currentTab, loadingUser, onSearch } = this.props;
+    const { xs, sm, md, lg, user, onClick, loadingUser, onSearch } = this.props;
 
     const userAttributes = _.map(filterEmptyObjects(flatArrays(flatObject(user, { safe: true }))), (value, key) => {
       return <Button
         bsClass="btn btn-default user-attribute-btn"
-        disabled={disabled || currentTab === "message-preview"}
         onClick={onClick(key)}
       >
         <div>{key.toString()}</div>
